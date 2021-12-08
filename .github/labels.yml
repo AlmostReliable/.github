@@ -1,75 +1,75 @@
 - name: "prio: critical"
-  color: "#B40813"
+  color: B40813
   description: ""
 
 - name: "prio: high"
-  color: "#D7401D"
+  color: D7401D
   description: ""
 
 - name: "prio: medium"
-  color: "#FAC92F"
+  color: FAC92F
   description: ""
 
 - name: "prio: low"
-  color: "#4AA751"
+  color: 4AA751
   description: ""
 
 - name: "state: awaiting response"
-  color: "#E4E669"
+  color: E4E669
   description: ""
 
 - name: "state: can't reproduce"
-  color: "#CC6C66"
+  color: CC6C66
   description: ""
 
 - name: "state: completed"
-  color: "#077713"
+  color: 077713
   description: ""
 
 - name: "state: confirmed"
-  color: "#01CC80"
+  color: 01CC80
   description: ""
 
 - name: "state: denied"
-  color: "#D53C4D"
+  color: D53C4D
   description: ""
 
 - name: "state: help wanted/needed"
-  color: "#705DFB"
+  color: 705DFB
   description: ""
 
 - name: "state: in progress"
-  color: "#FBCB07"
+  color: FBCB07
   description: ""
 
 - name: "state: pending"
-  color: "#F61AB3"
+  color: F61AB3
   description: ""
 
 - name: "type: abandoned"
-  color: "#CFD3D7"
+  color: CFD3D7
   description: ""
 
 - name: "type: bug"
-  color: "#D73A4A"
+  color: D73A4A
   description: ""
 
 - name: "type: duplicate"
-  color: "#9C4D14"
+  color: 9C4D14
   description: ""
 
 - name: "type: feature/enhancement"
-  color: "#0075CA"
+  color: 0075CA
   description: ""
 
 - name: "type: invalid"
-  color: "#CFD3D7"
+  color: CFD3D7
   description: ""
 
 - name: "type: question"
-  color: "#D876E3"
+  color: D876E3
   description: ""
 
 - name: "type: support"
-  color: "#C00B6A"
+  color: C00B6A
   description: ""
