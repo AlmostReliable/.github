@@ -23,4 +23,4 @@ This repository is licensed under the [GNU GPL v3.0][license].
 [github]: https://github.com/AlmostReliable/
 [health files]: https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/creating-a-default-community-health-file#about-default-community-health-files
 [docs]: https://docs.github.com/en/free-pro-team@latest/github/building-a-strong-community/creating-a-default-community-health-file
-[license]: LICENSE.md
+[license]: LICENSE
