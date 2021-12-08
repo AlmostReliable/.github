@@ -1,0 +1,38 @@
+name: Feature Request
+description: Suggest a change or an addition
+labels: ["state: pending", "type: feature/enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before submitting your feature request:
+
+         1. If you have a general support request, do not use the issue tracker and join our [Discord](https://discord.com/invite/ThFnwZCyYY) instead!
+         2. Make sure the feature isn't already requested or implemented in a newer version.
+         3. Follow our [Code of Conduct](https://github.com/AlmostReliable/.github/blob/main/.github/CODE_OF_CONDUCT.md)!
+
+  - type: markdown
+    attributes:
+      value: |
+        How to submit:
+
+         1. Provide a short and clear title above.
+         2. Only suggest one feature per submission!
+         3. Keep the submission in English.
+         4. Follow the template.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the feature/addition!
+      description: |
+        Be as precise and detailed as possible. If applicable, make sure to add screenshots.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reason
+    attributes:
+      label: Why would like to see this feature/addition?
+    validations:
+      required: true

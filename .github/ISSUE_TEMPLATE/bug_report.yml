@@ -1,0 +1,90 @@
+name: Bug Report
+description: Report an issue so we can fix it
+labels: ["state: pending", "type: bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before submitting your bug report:
+
+         1. If you have a general support request, do not use the issue tracker and join our [Discord](https://discord.com/invite/ThFnwZCyYY) instead!
+         2. Make sure the bug isn't already reported or fixed in a newer version.
+         3. Follow our [Code of Conduct](https://github.com/AlmostReliable/.github/blob/main/.github/CODE_OF_CONDUCT.md)!
+
+  - type: markdown
+    attributes:
+      value: |
+        How to submit:
+
+         1. Provide a short and clear title above.
+         2. Only report one bug per submission!
+         3. Keep the submission in English.
+         4. Follow the template.
+
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: |
+        Please provide the version of the mod or the modpack.
+        'Latest' is not a valid answer and will result in closing of the bug report.
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug!
+      description: |
+        Be as precise and detailed as possible. If applicable, make sure to add screenshots.
+        When specific reproduction steps are required, make sure to mention them.
+    validations:
+      required: true
+
+  - type: input
+    id: crash
+    attributes:
+      label: Crash Report
+      description: If the game crashed, upload the crash report to [Gist](https://gist.github.com/) or [pastebin](https://pastebin.com/) and provide the link.
+    validations:
+      required: false
+
+  - type: input
+    id: log
+    attributes:
+      label: Log
+      description: |
+        Upload your latest.log to [Gist](https://gist.github.com/) or [pastebin](https://pastebin.com/) and provide the link.
+        This can save us a lot of time reproducing or finding the actual problem.
+    validations:
+      required: false
+
+  - type: dropdown
+    id: modified
+    attributes:
+      label: Additional Context
+      description: Have you installed additional mods or modified anything?
+      options:
+        - "Yes"
+        - "No"
+    validations:
+      required: true
+
+  - type: textarea
+    id: modifications
+    attributes:
+      label: Modifications
+      description: If you answered 'Yes', please explain what was modified or added.
+    validations:
+      required: false
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: "Did the issue happen in singleplayer or on a server?"
+      options:
+        - "Singleplayer"
+        - "Server"
+        - "Both"
+    validations:
+      required: true
