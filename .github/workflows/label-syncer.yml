@@ -15,5 +15,8 @@ jobs:
         with:
           manifest: .github/labels.yml
           repository: |
+            AlmostReliable/curseforge-updates
+            AlmostReliable/lootjs-forge
             AlmostReliable/minecraft_energymeter
+            AlmostReliable/template-forge
           token: ${{ secrets.LABEL_SYNC_TOKEN }}
