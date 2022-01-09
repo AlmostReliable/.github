@@ -54,6 +54,10 @@
   color: D73A4A
   description: ""
 
+- name: "type: crash"
+  color: D7503A
+  description: ""
+
 - name: "type: duplicate"
   color: 9C4D14
   description: ""
