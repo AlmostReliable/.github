@@ -20,6 +20,11 @@ We hope to increase our members in the future to be able to release more project
 
 With additional members, like designers or creators, we are able to finish any project within the team without outside help. Each member has different qualifications to support the team.
 
+## **👀 Story of our name**
+The team was founded by Relentless and Lytho. Both of them have the same habit of having good ideas, implementing them and not finishing the projects after 80% completion.
+
+The original plan was to call the team '80Percent', but unfortunately the name was already taken. This led to the agreement on AlmostReliable, which describes not so much the projects, but rather the founding members themselves.
+
 ## **🔧 How do we work?**
 Each of our developers can always come up with their own projects and work on them. Whether these are included in the name of the team is done by vote.
 
