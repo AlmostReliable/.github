@@ -1,0 +1,82 @@
+name: Crash Report
+description: Report a game crash you are unsure about
+labels: ["state: pending", "type: crash"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before submitting your crash report:
+
+         1. If you have a general support request, do not use the issue tracker and join our [Discord](https://discord.com/invite/ThFnwZCyYY) instead!
+         2. Make sure you can reproduce the crash with only the relevant mods installed.
+         3. Try if this was fixed in a newer version of the mod already.
+         4. Only submit a crash report if you are not sure what exactly is causing it. Otherwise use a bug report.
+         3. Follow our [Code of Conduct](https://github.com/AlmostReliable/.github/blob/main/.github/CODE_OF_CONDUCT.md)!
+
+  - type: markdown
+    attributes:
+      value: |
+        How to submit:
+
+         1. Provide a short and clear title above.
+         2. Only report one crash per submission!
+         3. Keep the submission in English.
+         4. Follow the template.
+
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: |
+        Please provide the version of the mod or the modpack.
+        'Latest' is not a valid answer and will result in closing of the crash report.
+    validations:
+      required: true
+
+  - type: input
+    id: crash
+    attributes:
+      label: Crash Report
+      description: Upload the crash report to [Gist](https://gist.github.com/) or [pastebin](https://pastebin.com/) and provide the link.
+    validations:
+      required: true
+
+  - type: input
+    id: log
+    attributes:
+      label: Log
+      description: |
+        Upload your latest.log to [Gist](https://gist.github.com/) or [pastebin](https://pastebin.com/) and provide the link.
+        This can save us a lot of time reproducing or finding the actual problem.
+    validations:
+      required: false
+
+  - type: dropdown
+    id: modified
+    attributes:
+      label: Additional Context
+      description: Have you installed additional mods or modified anything?
+      options:
+        - "Yes"
+        - "No"
+    validations:
+      required: true
+
+  - type: textarea
+    id: modifications
+    attributes:
+      label: Modifications
+      description: If you answered 'Yes', please explain what was modified or added.
+    validations:
+      required: false
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: "Did the crash happen in singleplayer or on a server?"
+      options:
+        - "Singleplayer"
+        - "Server"
+        - "Both"
+    validations:
+      required: true
