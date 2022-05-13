@@ -15,8 +15,13 @@ jobs:
         with:
           manifest: .github/labels.yml
           repository: |
+            AlmostReliable/almostlib-forge
+            AlmostReliable/cardsjs-forge
             AlmostReliable/curseforge-updates
-            AlmostReliable/lootjs-forge
+            AlmostReliable/empressfate
             AlmostReliable/energymeter-forge
+            AlmostReliable/lazierae2-forge
+            AlmostReliable/lootjs-forge
+            AlmostReliable/ponderjs-forge
             AlmostReliable/template-forge
           token: ${{ secrets.LABEL_SYNC_TOKEN }}
