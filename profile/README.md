@@ -1,7 +1,5 @@
 <h1 align="center">
-    <a href="https://github.com/AlmostReliable/"><img src="https://raw.githubusercontent.com/AlmostReliable/.github/main/profile/logo.png" alt="Logo" width=220></a>
-    <br>
-    Almost Reliable
+    <a href="https://github.com/AlmostReliable/"><img src="banner.png" alt="Logo" width=400></a>
 </h1>
 <div align="center">
 
