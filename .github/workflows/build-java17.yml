@@ -17,6 +17,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Checkout action
+        uses: actions/checkout@v4
+        with:
+          repository: AlmostReliable/.github
+          sparse-checkout: ".github/actions"
+
       - name: Setup Java and Gradle
         uses: ./.github/actions/gradle-java17
         with:
