@@ -1,0 +1,26 @@
+name: Build
+
+on:
+  workflow_call:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    if: |
+      !contains(github.event.head_commit.message, '[skip build]')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java and Gradle
+        uses: ./.github/workflows/gradle-java17
+        with:
+          branch: ${{ github.event_name == 'pull_request' && 'read_only' || github.ref }}
+
+      - name: Build
+        run: ./gradlew build --stacktrace
