@@ -1,4 +1,4 @@
 {
-    "name": "AlmostReliable Java 17 Build Workflow",
+    "name": "Java 17 Build Workflow",
     "description": "Template workflow to build a project with Java 17 Gradle."
 }

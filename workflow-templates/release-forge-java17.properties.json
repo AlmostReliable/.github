@@ -1,0 +1,4 @@
+{
+    "name": "Java 17 Forge Release Workflow",
+    "description": "Template workflow to release a Forge project with Java 17 Gradle."
+}

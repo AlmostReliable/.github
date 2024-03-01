@@ -1,0 +1,4 @@
+{
+    "name": "Java 17 Fabric Release Workflow",
+    "description": "Template workflow to release a Fabric project with Java 17 Gradle."
+}
