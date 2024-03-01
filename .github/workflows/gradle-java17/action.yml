@@ -1,0 +1,25 @@
+name: Setup Gradle
+
+inputs:
+  branch:
+    description: branch that invoked the workflow
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-java@v4
+      with:
+        java-version: 17.0.8
+        distribution: microsoft
+
+    - uses: gradle/actions/setup-gradle@v3
+      with:
+        cache-read-only: ${{ github.ref != format('{0}', inputs.branch) }}
+        cache-overwrite-existing: true
+        gradle-home-cache-cleanup: true
+
+    - shell: bash
+      run: chmod +x ./gradlew
+
+    - uses: gradle/wrapper-validation-action@v2
