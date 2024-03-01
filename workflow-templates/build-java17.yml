@@ -1,0 +1,15 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - "$default-branch"
+    tags-ignore:
+      - "**"
+  pull_request:
+    branches:
+      - "$default-branch"
+
+jobs:
+  redirect-workflow:
+    uses: AlmostReliable/.github/.github/workflows/build-java17.yml@main
