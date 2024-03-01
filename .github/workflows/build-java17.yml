@@ -13,11 +13,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Checkout action
+      - name: Checkout compound action
         uses: actions/checkout@v4
         with:
           repository: AlmostReliable/.github
-          sparse-checkout: ".github/actions"
+          path: repo
+
+      - name: Move compound action
+        run: |
+          mv repo/.github/actions .github/actions
+          rm -rf repo
 
       - name: Setup Java and Gradle
         uses: ./.github/actions/gradle-java17

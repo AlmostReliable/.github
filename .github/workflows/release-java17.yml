@@ -221,6 +221,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Checkout compound action
+        uses: actions/checkout@v4
+        with:
+          repository: AlmostReliable/.github
+          path: repo
+
+      - name: Move compound action
+        run: |
+          mv repo/.github/actions .github/actions
+          rm -rf repo
+
       - name: Download preparation artifacts
         uses: actions/download-artifact@v4
         with:

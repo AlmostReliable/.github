@@ -28,5 +28,5 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  redirect-workflow:
+  redirect:
     uses: AlmostReliable/.github/.github/workflows/build-java17.yml@main
