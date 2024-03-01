@@ -353,7 +353,7 @@ jobs:
 
   mr-fabric-release:
     name: Modrinth Fabric Release
-    if: ${{ (github.event.inputs.loaders == 'fabric' || github.event.inputs.loaders == 'both') && github.event.inputs.debug == false }}
+    if: ${{ (github.event.inputs.loaders == 'fabric' || github.event.inputs.loaders == 'both') && github.event.inputs.debug == 'false' }}
     needs:
       - preparation
       - build
@@ -385,7 +385,7 @@ jobs:
 
   cf-fabric-release:
     name: CurseForge Fabric Release
-    if: ${{ (github.event.inputs.loaders == 'fabric' || github.event.inputs.loaders == 'both') && github.event.inputs.debug == false }}
+    if: ${{ (github.event.inputs.loaders == 'fabric' || github.event.inputs.loaders == 'both') && github.event.inputs.debug == 'false' }}
     needs:
       - preparation
       - build
@@ -417,7 +417,7 @@ jobs:
 
   mr-forge-release:
     name: Modrinth Forge Release
-    if: ${{ (github.event.inputs.loaders == 'forge' || github.event.inputs.loaders == 'both') && github.event.inputs.debug == false }}
+    if: ${{ (github.event.inputs.loaders == 'forge' || github.event.inputs.loaders == 'both') && github.event.inputs.debug == 'false' }}
     needs:
       - preparation
       - build
@@ -451,7 +451,7 @@ jobs:
 
   cf-forge-release:
     name: CurseForge Forge Release
-    if: ${{ (github.event.inputs.loaders == 'forge' || github.event.inputs.loaders == 'both') && github.event.inputs.debug == false }}
+    if: ${{ (github.event.inputs.loaders == 'forge' || github.event.inputs.loaders == 'both') && github.event.inputs.debug == 'false' }}
     needs:
       - preparation
       - build
