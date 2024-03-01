@@ -16,24 +16,30 @@ concurrency:
 jobs:
   sync-labels:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      issues: write
+    strategy:
+      matrix:
+        repos:
+          - AlmostReliable/almostlib
+          - AlmostReliable/almostpacked
+          - AlmostReliable/almostunified
+          - AlmostReliable/attributetooltipfix
+          - AlmostReliable/energymeter-forge
+          - AlmostReliable/kubejs-enderio
+          - AlmostReliable/lazierae2-forge
+          - AlmostReliable/lootjs
+          - AlmostReliable/merequester
+          - AlmostReliable/morejs
+          - AlmostReliable/ponderjs
+          - AlmostReliable/summoningrituals
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - uses: micnncim/action-label-syncer@v1
+      - name: Sync labels
+        uses: micnncim/action-label-syncer@v1.3.0
         with:
-          manifest: .github/labels.yml
-          repository: |
-            AlmostReliable/almostlib
-            AlmostReliable/almostpacked
-            AlmostReliable/almostunified
-            AlmostReliable/attributetooltipfix
-            AlmostReliable/energymeter-forge
-            AlmostReliable/kubejs-enderio
-            AlmostReliable/lazierae2-forge
-            AlmostReliable/lootjs
-            AlmostReliable/merequester
-            AlmostReliable/morejs
-            AlmostReliable/ponderjs
-            AlmostReliable/summoningrituals
+          repository: ${{ matrix.repos }}
           token: ${{ secrets.LABEL_SYNC_TOKEN }}
