@@ -1,26 +1,27 @@
 name: Build
 
 on:
+  workflow-dispatch:
   push:
     branches:
       - $default-branch
     tags-ignore:
-      - '**'
+      - "**"
     paths:
-      - 'gradle/**'
-      - '**.java'
-      - '**.kts'
-      - '**.properties'
-      - '**/build.yml'
+      - "gradle/**"
+      - "**.java"
+      - "**.kts"
+      - "**.properties"
+      - "**/build.yml"
   pull_request:
     branches:
       - $default-branch
     paths:
-      - 'gradle/**'
-      - '**.java'
-      - '**.kts'
-      - '**.properties'
-      - '**/build.yml'
+      - "gradle/**"
+      - "**.java"
+      - "**.kts"
+      - "**.properties"
+      - "**/build.yml"
 
 jobs:
   redirect-workflow:
