@@ -1,4 +1,5 @@
 name: Label Syncer
+
 on:
   push:
     branches:
@@ -6,11 +7,19 @@ on:
     paths:
       - .github/labels.yml
       - .github/workflows/label-syncer.yml
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - uses: micnncim/action-label-syncer@v1
         with:
           manifest: .github/labels.yml
@@ -20,10 +29,11 @@ jobs:
             AlmostReliable/almostunified
             AlmostReliable/attributetooltipfix
             AlmostReliable/energymeter-forge
+            AlmostReliable/kubejs-enderio
             AlmostReliable/lazierae2-forge
             AlmostReliable/lootjs
             AlmostReliable/merequester
             AlmostReliable/morejs
-            AlmostReliable/ponderjs-forge
-            AlmostReliable/summoningrituals-forge
+            AlmostReliable/ponderjs
+            AlmostReliable/summoningrituals
           token: ${{ secrets.LABEL_SYNC_TOKEN }}

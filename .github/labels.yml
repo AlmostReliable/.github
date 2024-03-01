@@ -42,8 +42,16 @@
   color: FBCB07
   description: ""
 
+- name: "state: on hold"
+  color: B300C8
+  description: ""
+
 - name: "state: pending"
   color: F61AB3
+  description: ""
+
+- name: "state: under consideration"
+  color: 1AF696
   description: ""
 
 - name: "type: abandoned"
