@@ -19,27 +19,19 @@ jobs:
     permissions:
       pull-requests: write
       issues: write
-    strategy:
-      matrix:
-        repos:
-          - AlmostReliable/almostlib
-          - AlmostReliable/almostpacked
-          - AlmostReliable/almostunified
-          - AlmostReliable/attributetooltipfix
-          - AlmostReliable/energymeter-forge
-          - AlmostReliable/kubejs-enderio
-          - AlmostReliable/lazierae2-forge
-          - AlmostReliable/lootjs
-          - AlmostReliable/merequester
-          - AlmostReliable/morejs
-          - AlmostReliable/ponderjs
-          - AlmostReliable/summoningrituals
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Sync labels
-        uses: micnncim/action-label-syncer@v1.3.0
+      - name: Label Sync
+        uses: srealmoreno/label-sync-action@v1
         with:
-          repository: ${{ matrix.repos }}
           token: ${{ secrets.LABEL_SYNC_TOKEN }}
+          auto-discover-repos: true
+          exclude-repos: |
+            .github
+          account-type: org
+          exclude-forked-repos: true
+          exclude-archived-repos: true
+          exclude-private-repos: true
+          exclude-disabled-repos: true
