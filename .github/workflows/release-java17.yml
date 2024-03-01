@@ -381,7 +381,7 @@ jobs:
 
           loaders: fabric
           game-versions: ${{ needs.preparation.outputs.MC_VERSION }}
-          dependencies: ${{ fromJson(inputs.dependencies) }}
+          # dependencies: ${{ fromJson(inputs.dependencies) }}
 
   cf-fabric-release:
     name: CurseForge Fabric Release
@@ -413,7 +413,7 @@ jobs:
 
           loaders: fabric
           game-versions: ${{ needs.preparation.outputs.MC_VERSION }}
-          dependencies: ${{ fromJson(inputs.dependencies) }}
+          # dependencies: ${{ fromJson(inputs.dependencies) }}
 
   mr-forge-release:
     name: Modrinth Forge Release
@@ -447,7 +447,7 @@ jobs:
             forge
             neoforge
           game-versions: ${{ needs.preparation.outputs.MC_VERSION }}
-          dependencies: ${{ fromJson(inputs.dependencies) }}
+          # dependencies: ${{ fromJson(inputs.dependencies) }}
 
   cf-forge-release:
     name: CurseForge Forge Release
@@ -481,7 +481,7 @@ jobs:
             forge
             neoforge
           game-versions: ${{ needs.preparation.outputs.MC_VERSION }}
-          dependencies: ${{ fromJson(inputs.dependencies) }}
+          # dependencies: ${{ fromJson(inputs.dependencies) }}
 
   github-release:
     name: GitHub Release
