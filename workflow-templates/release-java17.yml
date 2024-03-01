@@ -1,11 +1,5 @@
 name: Release
 
-env:
-  MOD_NAME: "AlmostUnified" # name used for the output JAR files (use a dash instead of spaces)
-  CURSEFORGE_ID: "633823" # ID of the project on CurseForge
-  MODRINTH_ID: "sdaSaQEz" # ID of the project on Modrinth
-  DEPENDENCIES: "['jei(optional){curseforge:238222}{modrinth:u6dRKJwZ}', 'rei(optional){curseforge:310111}{modrinth:nfn13YXA}']"
-
 on:
   workflow_dispatch:
     inputs:
@@ -46,6 +40,12 @@ on:
         required: false
         default: false
         description: "enable debug mode (GitHub only)"
+
+env:
+  MOD_NAME: "AlmostUnified" # name used for the output JAR files (use a dash instead of spaces)
+  CURSEFORGE_ID: "633823" # ID of the project on CurseForge
+  MODRINTH_ID: "sdaSaQEz" # ID of the project on Modrinth
+  DEPENDENCIES: "['jei(optional){curseforge:238222}{modrinth:u6dRKJwZ}', 'rei(optional){curseforge:310111}{modrinth:nfn13YXA}']"
 
 jobs:
   redirect:
