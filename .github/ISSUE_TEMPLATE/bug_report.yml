@@ -22,11 +22,20 @@ body:
          4. Follow the template.
 
   - type: input
-    id: version
+    id: mc_version
     attributes:
-      label: Version
+      label: Minecraft Version
       description: |
-        Please provide the version of the mod or the modpack.
+        Please provide the version of Minecraft you found the bug in.
+    validations:
+      required: true
+
+  - type: input
+    id: mod_version
+    attributes:
+      label: Mod Version
+      description: |
+        Please provide the version of the project (mod or modpack) you found the bug in.
         'Latest' is not a valid answer and will result in closing of the bug report.
     validations:
       required: true
@@ -62,8 +71,10 @@ body:
   - type: dropdown
     id: modified
     attributes:
-      label: Additional Context
-      description: Have you installed additional mods or modified anything?
+      label: Additions and Modifications
+      description: |
+        If you are reporting a modpack issue, did you install any additional mods or modify the pack?
+        When reporting a mod issue, did you modify the mod in any way?
       options:
         - "Yes"
         - "No"
@@ -73,7 +84,7 @@ body:
   - type: textarea
     id: modifications
     attributes:
-      label: Modifications
+      label: Additions and Modifications Description
       description: If you answered 'Yes', please explain what was modified or added.
     validations:
       required: false
