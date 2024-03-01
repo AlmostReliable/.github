@@ -40,9 +40,9 @@ on:
         description: "loaders to release for"
         default: "both"
       debug:
-        type: boolean
+        type: string
         required: false
-        default: false
+        default: "false"
         description: "enable debug mode (GitHub only)"
 
 jobs:
