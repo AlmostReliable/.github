@@ -230,7 +230,7 @@ jobs:
         run: tar -zxvf preparation.tar.gz
 
       - name: Setup Java and Gradle
-        uses: ./.github/workflows/gradle-java17
+        uses: AlmostReliable/.github/.github/workflows/gradle-java17@main
         with:
           branch: ${{ github.event_name == 'pull_request' && 'read_only' || github.ref }}
 
