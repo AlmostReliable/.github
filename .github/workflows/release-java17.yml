@@ -15,6 +15,11 @@ on:
         type: string
         required: true
         description: "ID of the project on Modrinth"
+      dependencies:
+        type: string
+        required: false
+        description: "dependencies of the mod"
+        default: "[]"
       target_version:
         type: string
         required: false
@@ -376,10 +381,7 @@ jobs:
 
           loaders: fabric
           game-versions: ${{ needs.preparation.outputs.MC_VERSION }}
-
-          dependencies: |
-            jei(optional){curseforge:238222}{modrinth:u6dRKJwZ}
-            rei(optional){curseforge:310111}{modrinth:nfn13YXA}
+          dependencies: ${{ fromJson(inputs.dependencies) }}
 
   cf-fabric-release:
     name: CurseForge Fabric Release
@@ -411,10 +413,7 @@ jobs:
 
           loaders: fabric
           game-versions: ${{ needs.preparation.outputs.MC_VERSION }}
-
-          dependencies: |
-            jei(optional){curseforge:238222}{modrinth:u6dRKJwZ}
-            rei(optional){curseforge:310111}{modrinth:nfn13YXA}
+          dependencies: ${{ fromJson(inputs.dependencies) }}
 
   mr-forge-release:
     name: Modrinth Forge Release
@@ -448,9 +447,7 @@ jobs:
             forge
             neoforge
           game-versions: ${{ needs.preparation.outputs.MC_VERSION }}
-          dependencies: |
-            jei(optional){curseforge:238222}{modrinth:u6dRKJwZ}
-            rei(optional){curseforge:310111}{modrinth:nfn13YXA}
+          dependencies: ${{ fromJson(inputs.dependencies) }}
 
   cf-forge-release:
     name: CurseForge Forge Release
@@ -484,9 +481,7 @@ jobs:
             forge
             neoforge
           game-versions: ${{ needs.preparation.outputs.MC_VERSION }}
-          dependencies: |
-            jei(optional){curseforge:238222}{modrinth:u6dRKJwZ}
-            rei(optional){curseforge:310111}{modrinth:nfn13YXA}
+          dependencies: ${{ fromJson(inputs.dependencies) }}
 
   github-release:
     name: GitHub Release
