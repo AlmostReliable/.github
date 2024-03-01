@@ -1,0 +1,4 @@
+{
+    "name": "Java 17 Multiloader Release Workflow",
+    "description": "Template workflow to release a Mutiloader project with Java 17 Gradle."
+}
