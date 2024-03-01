@@ -15,7 +15,7 @@ More about that can be read [here][docs].
 
 
 ## **🎓 License**
-This repository is licensed under the [GNU GPL v3.0][license].
+This project is licensed under the [GNU Lesser General Public License v3.0][license].
 
 
 <!-- Links -->
