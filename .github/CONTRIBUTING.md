@@ -10,10 +10,12 @@ Following these guidelines shows that you respect the time of the team members w
 </div>
 
 ## **📑 Code of Conduct**
+
 For everything in the project, the [Code of Conduct] applies.<br>
 Help us to keep our projects open and inclusive.
 
 ## **❓ Questions & Support**
+
 Do not use the [issue tracker](#-issue-tracker) for general support questions as we want to keep GitHub issues for bug reports and feature requests.
 
 Instead, we recommend using our [Discord] to ask questions and discuss things.
@@ -21,7 +23,8 @@ Instead, we recommend using our [Discord] to ask questions and discuss things.
 To save your time and ours, we will close contributions that belong to the general support category without further feedback.
 
 ## **🐞 Issue Tracker**
-The issue tracker is the preferred method to report bugs and request features. You can also do so in our [Discord] but we will quickly lose focus there.
+
+The issue tracker is the preferred method to report bugs and request features. The [Discord] is only being used for discussions about already submitted issues.
 
 This serves three purposes:
 1. having everything centralized in one spot
@@ -38,6 +41,7 @@ Please respect the following restrictions:
 To save your time and ours, we will close contributions that violate our rules or the restrictions without further feedback.
 
 ## **🧠 Pull Requests**
+
 Pull requests are a good method to contribute to the project.
 
 If you consider opening a pull request, thanks a lot. We appreciate the effort and try our best to process it.
@@ -57,8 +61,8 @@ Please make sure to make use of the provided and existing code styles in the pro
 By creating a pull request, you agree to license your work under the same license as that used by the project.
 
 ## **💘 Thank you**
-We are grateful for any contribution to our projects.
 
+We are grateful for any contribution to our projects.<br>
 Stay awesome!
 
 
