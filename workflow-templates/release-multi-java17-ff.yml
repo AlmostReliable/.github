@@ -26,6 +26,15 @@ on:
           - "alpha"
           - "beta"
           - "release"
+      loaders:
+        type: choice
+        required: true
+        description: "loaders to release for"
+        default: "both"
+        options:
+          - "fabric"
+          - "forge"
+          - "both"
       debug:
         type: boolean
         required: false
@@ -46,5 +55,5 @@ jobs:
       target_version: ${{ github.event.inputs.target_version }}
       update_type: ${{ github.event.inputs.update_type }}
       release_type: ${{ github.event.inputs.release_type }}
-      loaders: forge
+      loaders: ${{ github.event.inputs.loaders }}
       debug: ${{ github.event.inputs.debug }}

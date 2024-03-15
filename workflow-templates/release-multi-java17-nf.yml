@@ -26,6 +26,15 @@ on:
           - "alpha"
           - "beta"
           - "release"
+      loaders:
+        type: choice
+        required: true
+        description: "loaders to release for"
+        default: "both"
+        options:
+          - "fabric"
+          - "neoforge"
+          - "both"
       debug:
         type: boolean
         required: false
@@ -34,7 +43,7 @@ on:
 
 jobs:
   redirect:
-    uses: AlmostReliable/.github/.github/workflows/release-java17-ff.yml@main
+    uses: AlmostReliable/.github/.github/workflows/release-java17-nf.yml@main
     secrets: inherit
     with:
       mod_name: "AlmostUnified" # name used for the output JAR files (use a dash instead of spaces)
@@ -46,5 +55,5 @@ jobs:
       target_version: ${{ github.event.inputs.target_version }}
       update_type: ${{ github.event.inputs.update_type }}
       release_type: ${{ github.event.inputs.release_type }}
-      loaders: forge
+      loaders: ${{ github.event.inputs.loaders }}
       debug: ${{ github.event.inputs.debug }}

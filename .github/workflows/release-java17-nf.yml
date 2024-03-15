@@ -262,7 +262,7 @@ jobs:
           if [ "$MULTILOADER" == "false" ]; then
             mv -f build/libs/*.jar output/
           else
-            mv -f Fabric/build/libs/*.jar Forge/build/libs/*.jar output/
+            mv -f Forge/build/libs/*.jar Fabric/build/libs/*.jar output/
           fi
 
           rm -f output/*-dev-shadow.jar output/*-sources.jar
@@ -351,70 +351,6 @@ jobs:
           blank_line
           add_head "Gradle Summary"
 
-  mr-fabric-release:
-    name: Modrinth Fabric Release
-    if: ${{ (github.event.inputs.loaders == 'fabric' || github.event.inputs.loaders == 'both') && github.event.inputs.debug == 'false' }}
-    needs:
-      - preparation
-      - build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-artifacts
-
-      - name: Extract build artifacts
-        run: tar -zxvf build.tar.gz
-
-      - name: Release Fabric on Modrinth
-        uses: Kir-Antipov/mc-publish@v3.3
-        with:
-          modrinth-id: ${{ inputs.modrinth_id }}
-          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
-
-          files: output/*fabric*.jar
-          name: ${{ inputs.mod_name }}-Fabric-${{ needs.preparation.outputs.MC_VERSION }}-${{ needs.preparation.outputs.MOD_VERSION }}
-          version: ${{ needs.preparation.outputs.MC_VERSION }}-${{ needs.preparation.outputs.MOD_VERSION }}+fabric
-          version-type: ${{ inputs.release_type }}
-          changelog-file: output/changelog.md
-
-          loaders: fabric
-          game-versions: ${{ needs.preparation.outputs.MC_VERSION }}
-          dependencies: ${{ inputs.dependencies }}
-
-  cf-fabric-release:
-    name: CurseForge Fabric Release
-    if: ${{ (github.event.inputs.loaders == 'fabric' || github.event.inputs.loaders == 'both') && github.event.inputs.debug == 'false' }}
-    needs:
-      - preparation
-      - build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-artifacts
-
-      - name: Extract build artifacts
-        run: tar -zxvf build.tar.gz
-
-      - name: Release Fabric on CurseForge
-        uses: Kir-Antipov/mc-publish@v3.3
-        with:
-          curseforge-id: ${{ inputs.curseforge_id }}
-          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
-
-          files: output/*fabric*.jar
-          name: ${{ inputs.mod_name }}-Fabric-${{ needs.preparation.outputs.MC_VERSION }}-${{ needs.preparation.outputs.MOD_VERSION }}
-          version: ${{ needs.preparation.outputs.MC_VERSION }}-${{ needs.preparation.outputs.MOD_VERSION }}+fabric
-          version-type: ${{ inputs.release_type }}
-          changelog-file: output/changelog.md
-
-          loaders: fabric
-          game-versions: ${{ needs.preparation.outputs.MC_VERSION }}
-          dependencies: ${{ inputs.dependencies }}
-
   mr-forge-release:
     name: Modrinth Forge Release
     if: ${{ (github.event.inputs.loaders == 'forge' || github.event.inputs.loaders == 'both') && github.event.inputs.debug == 'false' }}
@@ -480,6 +416,70 @@ jobs:
           loaders: |
             forge
             neoforge
+          game-versions: ${{ needs.preparation.outputs.MC_VERSION }}
+          dependencies: ${{ inputs.dependencies }}
+
+  mr-fabric-release:
+    name: Modrinth Fabric Release
+    if: ${{ (github.event.inputs.loaders == 'fabric' || github.event.inputs.loaders == 'both') && github.event.inputs.debug == 'false' }}
+    needs:
+      - preparation
+      - build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+
+      - name: Extract build artifacts
+        run: tar -zxvf build.tar.gz
+
+      - name: Release Fabric on Modrinth
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          modrinth-id: ${{ inputs.modrinth_id }}
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+
+          files: output/*fabric*.jar
+          name: ${{ inputs.mod_name }}-Fabric-${{ needs.preparation.outputs.MC_VERSION }}-${{ needs.preparation.outputs.MOD_VERSION }}
+          version: ${{ needs.preparation.outputs.MC_VERSION }}-${{ needs.preparation.outputs.MOD_VERSION }}+fabric
+          version-type: ${{ inputs.release_type }}
+          changelog-file: output/changelog.md
+
+          loaders: fabric
+          game-versions: ${{ needs.preparation.outputs.MC_VERSION }}
+          dependencies: ${{ inputs.dependencies }}
+
+  cf-fabric-release:
+    name: CurseForge Fabric Release
+    if: ${{ (github.event.inputs.loaders == 'fabric' || github.event.inputs.loaders == 'both') && github.event.inputs.debug == 'false' }}
+    needs:
+      - preparation
+      - build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+
+      - name: Extract build artifacts
+        run: tar -zxvf build.tar.gz
+
+      - name: Release Fabric on CurseForge
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          curseforge-id: ${{ inputs.curseforge_id }}
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+
+          files: output/*fabric*.jar
+          name: ${{ inputs.mod_name }}-Fabric-${{ needs.preparation.outputs.MC_VERSION }}-${{ needs.preparation.outputs.MOD_VERSION }}
+          version: ${{ needs.preparation.outputs.MC_VERSION }}-${{ needs.preparation.outputs.MOD_VERSION }}+fabric
+          version-type: ${{ inputs.release_type }}
+          changelog-file: output/changelog.md
+
+          loaders: fabric
           game-versions: ${{ needs.preparation.outputs.MC_VERSION }}
           dependencies: ${{ inputs.dependencies }}
 

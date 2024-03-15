@@ -1,0 +1,4 @@
+{
+    "name": "Java 17 Multiloader (Forge/Fabric) Release Workflow",
+    "description": "Template workflow to release a Mutiloader (Forge/Fabric) project with Java 17 Gradle."
+}
