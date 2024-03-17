@@ -262,7 +262,7 @@ jobs:
           if [ "$MULTILOADER" == "false" ]; then
             mv -f build/libs/*.jar output/
           else
-            mv -f NeoForge/build/libs/*.jar Fabric/build/libs/*.jar output/
+            mv -f Forge/build/libs/*.jar Fabric/build/libs/*.jar output/
           fi
 
           rm -f output/*-dev-shadow.jar output/*-sources.jar
@@ -351,9 +351,9 @@ jobs:
           blank_line
           add_head "Gradle Summary"
 
-  mr-neo-release:
-    name: Modrinth NeoForge Release
-    if: ${{ (github.event.inputs.loaders == 'neoforge' || github.event.inputs.loaders == 'both') && github.event.inputs.debug == 'false' }}
+  mr-forge-release:
+    name: Modrinth Forge Release
+    if: ${{ (github.event.inputs.loaders == 'forge' || github.event.inputs.loaders == 'both') && github.event.inputs.debug == 'false' }}
     needs:
       - preparation
       - build
@@ -367,25 +367,27 @@ jobs:
       - name: Extract build artifacts
         run: tar -zxvf build.tar.gz
 
-      - name: Release NeoForge on Modrinth
+      - name: Release Forge on Modrinth
         uses: Kir-Antipov/mc-publish@v3.3
         with:
           modrinth-id: ${{ inputs.modrinth_id }}
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
 
-          files: output/*neoforge*.jar
-          name: ${{ inputs.mod_name }}-NeoForge-${{ needs.preparation.outputs.MC_VERSION }}-${{ needs.preparation.outputs.MOD_VERSION }}
-          version: ${{ needs.preparation.outputs.MC_VERSION }}-${{ needs.preparation.outputs.MOD_VERSION }}+neoforge
+          files: output/*forge*.jar
+          name: ${{ inputs.mod_name }}-Forge-${{ needs.preparation.outputs.MC_VERSION }}-${{ needs.preparation.outputs.MOD_VERSION }}
+          version: ${{ needs.preparation.outputs.MC_VERSION }}-${{ needs.preparation.outputs.MOD_VERSION }}+forge
           version-type: ${{ inputs.release_type }}
           changelog-file: output/changelog.md
 
-          loaders: neoforge
+          loaders: |
+            forge
+            neoforge
           game-versions: ${{ needs.preparation.outputs.MC_VERSION }}
           dependencies: ${{ inputs.dependencies }}
 
-  cf-neoforge-release:
-    name: CurseForge NeoForge Release
-    if: ${{ (github.event.inputs.loaders == 'neoforge' || github.event.inputs.loaders == 'both') && github.event.inputs.debug == 'false' }}
+  cf-forge-release:
+    name: CurseForge Forge Release
+    if: ${{ (github.event.inputs.loaders == 'forge' || github.event.inputs.loaders == 'both') && github.event.inputs.debug == 'false' }}
     needs:
       - preparation
       - build
@@ -399,19 +401,21 @@ jobs:
       - name: Extract build artifacts
         run: tar -zxvf build.tar.gz
 
-      - name: Release NeoForge on CurseForge
+      - name: Release Forge on CurseForge
         uses: Kir-Antipov/mc-publish@v3.3
         with:
           curseforge-id: ${{ inputs.curseforge_id }}
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
 
-          files: output/*neoforge*.jar
-          name: ${{ inputs.mod_name }}-NeoForge-${{ needs.preparation.outputs.MC_VERSION }}-${{ needs.preparation.outputs.MOD_VERSION }}
-          version: ${{ needs.preparation.outputs.MC_VERSION }}-${{ needs.preparation.outputs.MOD_VERSION }}+neoforge
+          files: output/*forge*.jar
+          name: ${{ inputs.mod_name }}-Forge-${{ needs.preparation.outputs.MC_VERSION }}-${{ needs.preparation.outputs.MOD_VERSION }}
+          version: ${{ needs.preparation.outputs.MC_VERSION }}-${{ needs.preparation.outputs.MOD_VERSION }}+forge
           version-type: ${{ inputs.release_type }}
           changelog-file: output/changelog.md
 
-          loaders: neoforge
+          loaders: |
+            forge
+            neoforge
           game-versions: ${{ needs.preparation.outputs.MC_VERSION }}
           dependencies: ${{ inputs.dependencies }}
 
