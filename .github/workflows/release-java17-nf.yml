@@ -10,16 +10,15 @@ on:
       curseforge_id:
         type: string
         required: true
-        description: "ID of the project on CurseForge"
+        description: "id of the project on CurseForge"
       modrinth_id:
         type: string
         required: true
-        description: "ID of the project on Modrinth"
+        description: "id of the project on Modrinth"
       dependencies:
         type: string
         required: false
         description: "dependencies of the mod"
-        default: "[]"
       target_version:
         type: string
         required: false
@@ -61,7 +60,7 @@ jobs:
       - name: Validate inputs
         id: validate
         env:
-          LOADERS: ${{ github.event.inputs.loaders }}
+          LOADERS: ${{ inputs.loaders }}
         run: |
           if [ -d "src" ]; then
             MULTILOADER="false"
@@ -97,8 +96,8 @@ jobs:
       - name: Compute mod version
         id: mod_version
         env:
-          TARGET_VERSION: ${{ github.event.inputs.target_version }}
-          UPDATE_TYPE: ${{ github.event.inputs.update_type }}
+          TARGET_VERSION: ${{ inputs.target_version }}
+          UPDATE_TYPE: ${{ inputs.update_type }}
         run: |
           echo "getting current mod version"
           CURRENT_VERSION=$(grep -oP 'modVersion\s*=\s*\K.*' gradle.properties)
@@ -167,7 +166,7 @@ jobs:
         env:
           MOD_VERSION: ${{ steps.mod_version.outputs.MOD_VERSION }}
           MC_VERSION: ${{ steps.mc_version.outputs.MC_VERSION }}
-          LOADERS: ${{ github.event.inputs.loaders }}
+          LOADERS: ${{ inputs.loaders }}
         run: |
           if [ "$LOADERS" == "both" ]; then
             LOADER=""
@@ -255,7 +254,7 @@ jobs:
 
       - name: Move JARs to central directory
         env:
-          LOADERS: ${{ needs.preparation.outputs.MULTILOADER }}
+          MULTILOADER: ${{ needs.preparation.outputs.MULTILOADER }}
         run: |
           mkdir output
 
@@ -295,11 +294,11 @@ jobs:
 
       - name: Job Summary
         env:
-          TARGET_VERSION: ${{ github.event.inputs.target_version }}
-          UPDATE_TYPE: ${{ github.event.inputs.update_type }}
-          RELEASE_TYPE: ${{ github.event.inputs.release_type }}
-          LOADERS: ${{ github.event.inputs.loaders }}
-          DEBUG: ${{ github.event.inputs.debug }}
+          TARGET_VERSION: ${{ inputs.target_version }}
+          UPDATE_TYPE: ${{ inputs.update_type }}
+          RELEASE_TYPE: ${{ inputs.release_type }}
+          LOADERS: ${{ inputs.loaders }}
+          DEBUG: ${{ inputs.debug }}
           MULTILOADER: ${{ needs.preparation.outputs.MULTILOADER }}
           MOD_VERSION: ${{ needs.preparation.outputs.MOD_VERSION }}
           MC_VERSION: ${{ needs.preparation.outputs.MC_VERSION }}
@@ -353,7 +352,7 @@ jobs:
 
   mr-neo-release:
     name: Modrinth NeoForge Release
-    if: ${{ (github.event.inputs.loaders == 'neoforge' || github.event.inputs.loaders == 'both') && github.event.inputs.debug == 'false' }}
+    if: ${{ (inputs.loaders == 'neoforge' || inputs.loaders == 'both') && inputs.debug == 'false' }}
     needs:
       - preparation
       - build
@@ -385,7 +384,7 @@ jobs:
 
   cf-neoforge-release:
     name: CurseForge NeoForge Release
-    if: ${{ (github.event.inputs.loaders == 'neoforge' || github.event.inputs.loaders == 'both') && github.event.inputs.debug == 'false' }}
+    if: ${{ (inputs.loaders == 'neoforge' || inputs.loaders == 'both') && inputs.debug == 'false' }}
     needs:
       - preparation
       - build
@@ -417,7 +416,7 @@ jobs:
 
   mr-fabric-release:
     name: Modrinth Fabric Release
-    if: ${{ (github.event.inputs.loaders == 'fabric' || github.event.inputs.loaders == 'both') && github.event.inputs.debug == 'false' }}
+    if: ${{ (inputs.loaders == 'fabric' || inputs.loaders == 'both') && inputs.debug == 'false' }}
     needs:
       - preparation
       - build
@@ -449,7 +448,7 @@ jobs:
 
   cf-fabric-release:
     name: CurseForge Fabric Release
-    if: ${{ (github.event.inputs.loaders == 'fabric' || github.event.inputs.loaders == 'both') && github.event.inputs.debug == 'false' }}
+    if: ${{ (inputs.loaders == 'fabric' || inputs.loaders == 'both') && inputs.debug == 'false' }}
     needs:
       - preparation
       - build
@@ -498,8 +497,8 @@ jobs:
 
       - name: Construct release info
         env:
-          RELEASE_TYPE: ${{ github.event.inputs.release_type }}
-          LOADERS: ${{ github.event.inputs.loaders }}
+          RELEASE_TYPE: ${{ inputs.release_type }}
+          LOADERS: ${{ inputs.loaders }}
         run: |
           if [ "$LOADERS" == "both" ]; then
             FILES="output/*.jar"
