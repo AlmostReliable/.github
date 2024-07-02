@@ -1,0 +1,4 @@
+{
+    "name": "Build workflow",
+    "description": "Template workflow to build a Gradle project with a configurable Java distribution and version."
+}

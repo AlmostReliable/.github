@@ -1,0 +1,4 @@
+{
+    "name": "Multiloader (NeoForge/Fabric) release workflow",
+    "description": "Template workflow to release a Mutiloader (NeoForge/Fabric) Gradle project with a configurable Java distribution and version."
+}
