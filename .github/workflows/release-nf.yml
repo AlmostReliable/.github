@@ -1,0 +1,568 @@
+name: Release
+
+on:
+  workflow_call:
+    inputs:
+      java-distribution:
+        type: string
+        description: java distribution to use
+        required: false
+        default: "microsoft"
+      java-version:
+        type: string
+        description: java version to use
+        required: false
+        default: "21"
+      mod_name:
+        type: string
+        required: true
+        description: "name of the mod"
+      curseforge_id:
+        type: string
+        required: true
+        description: "id of the project on CurseForge"
+      modrinth_id:
+        type: string
+        required: true
+        description: "id of the project on Modrinth"
+      dependencies:
+        type: string
+        required: false
+        description: "dependencies of the mod"
+      target_version:
+        type: string
+        required: false
+        description: "mod version | empty = next option"
+      update_type:
+        type: string
+        required: false
+        description: "update type"
+        default: "minor"
+      release_type:
+        type: string
+        required: true
+        description: "type of release"
+        default: "release"
+      loaders:
+        type: string
+        required: true
+        description: "loaders to release for"
+        default: "both"
+      debug:
+        type: string
+        required: false
+        default: "false"
+        description: "enable debug mode (GitHub only)"
+
+jobs:
+  preparation:
+    name: Preparation
+    runs-on: ubuntu-latest
+    outputs:
+      MULTILOADER: ${{ steps.validate.outputs.MULTILOADER }}
+      MOD_VERSION: ${{ steps.mod_version.outputs.MOD_VERSION }}
+      MC_VERSION: ${{ steps.mc_version.outputs.MC_VERSION }}
+      NEEDS_COMMIT: ${{ steps.commit_info.outputs.NEEDS_COMMIT }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate inputs
+        id: validate
+        env:
+          LOADERS: ${{ inputs.loaders }}
+        run: |
+          if [ -d "src" ]; then
+            MULTILOADER="false"
+          else
+            MULTILOADER="true"
+          fi
+
+          if [ "$LOADERS" == "both" ] && [ "$MULTILOADER" == "false" ]; then
+            echo "both loaders selected, but no multiloader environment found"
+            exit 1
+          fi
+
+          echo "MULTILOADER=$MULTILOADER" >> $GITHUB_OUTPUT
+
+      - name: Check secrets
+        run: |
+          if [ -z "${{ secrets.MODRINTH_TOKEN }}" ]; then
+            echo "MODRINTH_TOKEN is not set"
+            exit 1
+          fi
+          if [ -z "${{ secrets.CURSEFORGE_TOKEN }}" ]; then
+            echo "CURSEFORGE_TOKEN is not set"
+            exit 1
+          fi
+
+      - name: Validate Modrinth token
+        run: |
+          if [ -n "$(curl -s -H "Authorization: ${{ secrets.MODRINTH_TOKEN }}" https://api.modrinth.com/v2/user | grep "unauthorized")" ]; then
+            echo "Modrinth Token is invalid!"
+            exit 1
+          fi
+
+      - name: Compute mod version
+        id: mod_version
+        env:
+          TARGET_VERSION: ${{ inputs.target_version }}
+          UPDATE_TYPE: ${{ inputs.update_type }}
+        run: |
+          echo "getting current mod version"
+          CURRENT_VERSION=$(grep -oP 'modVersion\s*=\s*\K.*' gradle.properties)
+          echo "detected current mod version: $CURRENT_VERSION"
+
+          if [[ -z "$CURRENT_VERSION" ]]; then
+            echo "no current mod version found"
+            exit 1
+          fi
+
+          if [[ -z "$TARGET_VERSION" ]]; then
+            echo "no target version provided, evaluating new mod version from update type: $UPDATE_TYPE"
+            case "$UPDATE_TYPE" in
+              major)
+                NEW_VERSION=$(echo $CURRENT_VERSION | awk -F. '{$1++; print $1".0.0"}')
+                ;;
+              minor)
+                NEW_VERSION=$(echo $CURRENT_VERSION | awk -F. '{$2++; print $1"."$2".0"}')
+                ;;
+              patch)
+                NEW_VERSION=$(echo $CURRENT_VERSION | awk -F. '{$3++; print $1"."$2"."$3}')
+                ;;
+              none)
+                NEW_VERSION=$CURRENT_VERSION
+                ;;
+            esac
+          else
+            echo "setting new mod version from target version: $TARGET_VERSION"
+            NEW_VERSION=$TARGET_VERSION
+          fi
+
+          if ! [[ $NEW_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "invalid new mod version: $NEW_VERSION"
+            exit 1
+          fi
+
+          echo "using new mod version: $NEW_VERSION"
+          echo "MOD_VERSION=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Get Minecraft version
+        id: mc_version
+        run: |
+          MC_VERSION=$(grep -oP 'm(c|inecraft)Version\s*=\s*\K.*' gradle.properties)
+
+          if [[ -z "$MC_VERSION" ]]; then
+            echo "no Minecraft version found"
+            exit 1
+          fi
+
+          echo "using Minecraft version: $MC_VERSION"
+          echo "MC_VERSION=$MC_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Adjust mod version
+        env:
+          MOD_VERSION: ${{ steps.mod_version.outputs.MOD_VERSION }}
+        run: |
+          if grep -q "modVersion\s*=\s*$MOD_VERSION" gradle.properties; then
+            echo "version is already set"
+          else
+            echo "version is outdated, adjusting gradle.properties"
+            sed -i "s/modVersion = .*/modVersion = $MOD_VERSION/g" gradle.properties
+            git diff gradle.properties
+          fi
+
+      - name: Check and adjust changelog
+        env:
+          MOD_VERSION: ${{ steps.mod_version.outputs.MOD_VERSION }}
+          MC_VERSION: ${{ steps.mc_version.outputs.MC_VERSION }}
+          LOADERS: ${{ inputs.loaders }}
+        run: |
+          if [ "$LOADERS" == "both" ]; then
+            LOADER=""
+          else
+            LOADER="-$LOADERS"
+          fi
+
+          if grep -qF "## Unreleased" CHANGELOG.md; then
+            echo "unreleased changelog entry found, adjusting header and adding link"
+
+            sed -i "s/^## Unreleased.*/## [$MOD_VERSION] - $(date +%F)/" CHANGELOG.md
+            awk -v n="[$MOD_VERSION]: https://github.com/$GITHUB_REPOSITORY/releases/tag/v$MC_VERSION$LOADER-$MOD_VERSION" '/^\[[0-9]+\.[0-9]+\.[0-9]+\]: https:\/\// && !inserted {print n; inserted=1}1' CHANGELOG.md > temp && mv temp CHANGELOG.md
+
+            git diff CHANGELOG.md
+          elif grep -qF "## [$MOD_VERSION]" CHANGELOG.md; then
+            echo "existing changelog entry found for version $MOD_VERSION"
+
+            if ! grep -qF "[$MOD_VERSION]: https://" CHANGELOG.md; then
+              echo "adding missing changelog link for version $MOD_VERSION"
+              awk -v n="[$MOD_VERSION]: https://github.com/$GITHUB_REPOSITORY/releases/tag/v$MC_VERSION$LOADER-$MOD_VERSION" '/^\[[0-9]+\.[0-9]+\.[0-9]+\]: https:\/\// && !inserted {print n; inserted=1}1' CHANGELOG.md > temp && mv temp CHANGELOG.md
+
+              git diff CHANGELOG.md
+            fi
+          else
+            echo "no changelog entry found for version $MOD_VERSION"
+            exit 1
+          fi
+
+      - name: Store commit info
+        id: commit_info
+        run: |
+          if [[ -n $(git diff --name-only gradle.properties CHANGELOG.md) ]]; then
+            NEEDS_COMMIT="true"
+          else
+            NEEDS_COMMIT="false"
+          fi
+
+          echo "NEEDS_COMMIT=$NEEDS_COMMIT" >> $GITHUB_OUTPUT
+
+      - name: Archive results
+        run: tar -zcvf preparation.tar.gz gradle.properties CHANGELOG.md
+
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        with:
+          name: preparation-artifacts
+          path: preparation.tar.gz
+          if-no-files-found: error
+          retention-days: 3
+
+  build:
+    name: Build
+    needs: preparation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Checkout compound action
+        uses: actions/checkout@v4
+        with:
+          repository: AlmostReliable/.github
+          path: repo
+
+      - name: Move compound action
+        run: |
+          mv repo/.github/actions .github/actions
+          rm -rf repo
+
+      - name: Download preparation artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: preparation-artifacts
+
+      - name: Extract preparation artifacts
+        run: tar -zxvf preparation.tar.gz
+
+      - name: Setup Java and Gradle
+        uses: ./.github/actions/gradle-java
+        with:
+          java-distribution: ${{ inputs.java-distribution }}
+          java-version: ${{ inputs.java-version }}
+          branch: ${{ github.event_name == 'pull_request' && 'read_only' || github.ref }}
+
+      - name: Assemble the JARs
+        run: ./gradlew assemble
+
+      - name: Move JARs to central directory
+        env:
+          MULTILOADER: ${{ needs.preparation.outputs.MULTILOADER }}
+        run: |
+          mkdir output
+
+          if [ "$MULTILOADER" == "false" ]; then
+            mv -f build/libs/*.jar output/
+          else
+            mv -f NeoForge/build/libs/*.jar Fabric/build/libs/*.jar output/
+          fi
+
+          rm -f output/*-dev-shadow.jar output/*-sources.jar
+
+      - name: Install changelog parser
+        uses: taiki-e/install-action@v2
+        with:
+          tool: parse-changelog
+
+      - name: Parse changelog
+        env:
+          MOD_VERSION: ${{ needs.preparation.outputs.MOD_VERSION }}
+        run: |
+          parse-changelog CHANGELOG.md "$MOD_VERSION" > output/changelog.md
+          if [ ! -s output/changelog.md ]; then
+            echo "Changelog is empty"
+            exit 1
+          fi
+
+      - name: Archive results
+        run: tar -zcvf build.tar.gz output
+
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: build.tar.gz
+          if-no-files-found: error
+          retention-days: 3
+
+      - name: Job Summary
+        env:
+          TARGET_VERSION: ${{ inputs.target_version }}
+          UPDATE_TYPE: ${{ inputs.update_type }}
+          RELEASE_TYPE: ${{ inputs.release_type }}
+          LOADERS: ${{ inputs.loaders }}
+          DEBUG: ${{ inputs.debug }}
+          MULTILOADER: ${{ needs.preparation.outputs.MULTILOADER }}
+          MOD_VERSION: ${{ needs.preparation.outputs.MOD_VERSION }}
+          MC_VERSION: ${{ needs.preparation.outputs.MC_VERSION }}
+        run: |
+          add_head() {
+            echo "## $1" >> $GITHUB_STEP_SUMMARY
+          }
+          add_line() {
+            echo "- $1" >> $GITHUB_STEP_SUMMARY
+          }
+          blank_line() {
+            echo "" >> $GITHUB_STEP_SUMMARY
+          }
+
+          if [ "$TARGET_VERSION" = "" ]; then
+            VERSION="none"
+          else
+            VERSION=$TARGET_VERSION
+          fi
+          if [ "$VERSION" = "none" ]; then
+            UPDATE=$UPDATE_TYPE
+          else
+            UPDATE="ignored"
+          fi
+
+          add_head "Inputs"
+          blank_line
+          add_line "Version: $VERSION"
+          add_line "Update Type: $UPDATE"
+          add_line "Release Type: $RELEASE_TYPE"
+          add_line "Loaders: $LOADERS"
+          add_line "Debug: $DEBUG"
+          blank_line
+          add_head "Preparation Information"
+          blank_line
+          add_line "Multiloader: $MULTILOADER"
+          add_line "Mod Version: $MOD_VERSION"
+          add_line "Minecraft Version: $MC_VERSION"
+          blank_line
+          add_head "Build Information"
+          blank_line
+          add_line "JAR files: $(find output -maxdepth 1 -type f -name '*.jar' | wc -l)"
+          add_line "Folder size: $(du -sh output | cut -f1)"
+          add_line "Archive size: $(du -sh build.tar.gz | cut -f1)"
+          blank_line
+          add_head "Changelog"
+          blank_line
+          cat output/changelog.md >> $GITHUB_STEP_SUMMARY
+          blank_line
+          add_head "Gradle Summary"
+
+  mr-neo-release:
+    name: Modrinth NeoForge Release
+    if: ${{ (inputs.loaders == 'neoforge' || inputs.loaders == 'both') && inputs.debug == 'false' }}
+    needs:
+      - preparation
+      - build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+
+      - name: Extract build artifacts
+        run: tar -zxvf build.tar.gz
+
+      - name: Release NeoForge on Modrinth
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          modrinth-id: ${{ inputs.modrinth_id }}
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+
+          files: output/*neoforge*.jar
+          name: ${{ inputs.mod_name }}-NeoForge-${{ needs.preparation.outputs.MC_VERSION }}-${{ needs.preparation.outputs.MOD_VERSION }}
+          version: ${{ needs.preparation.outputs.MC_VERSION }}-${{ needs.preparation.outputs.MOD_VERSION }}+neoforge
+          version-type: ${{ inputs.release_type }}
+          changelog-file: output/changelog.md
+
+          loaders: neoforge
+          game-versions: ${{ needs.preparation.outputs.MC_VERSION }}
+          dependencies: ${{ inputs.dependencies }}
+
+  cf-neoforge-release:
+    name: CurseForge NeoForge Release
+    if: ${{ (inputs.loaders == 'neoforge' || inputs.loaders == 'both') && inputs.debug == 'false' }}
+    needs:
+      - preparation
+      - build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+
+      - name: Extract build artifacts
+        run: tar -zxvf build.tar.gz
+
+      - name: Release NeoForge on CurseForge
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          curseforge-id: ${{ inputs.curseforge_id }}
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+
+          files: output/*neoforge*.jar
+          name: ${{ inputs.mod_name }}-NeoForge-${{ needs.preparation.outputs.MC_VERSION }}-${{ needs.preparation.outputs.MOD_VERSION }}
+          version: ${{ needs.preparation.outputs.MC_VERSION }}-${{ needs.preparation.outputs.MOD_VERSION }}+neoforge
+          version-type: ${{ inputs.release_type }}
+          changelog-file: output/changelog.md
+
+          loaders: neoforge
+          game-versions: ${{ needs.preparation.outputs.MC_VERSION }}
+          dependencies: ${{ inputs.dependencies }}
+
+  mr-fabric-release:
+    name: Modrinth Fabric Release
+    if: ${{ (inputs.loaders == 'fabric' || inputs.loaders == 'both') && inputs.debug == 'false' }}
+    needs:
+      - preparation
+      - build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+
+      - name: Extract build artifacts
+        run: tar -zxvf build.tar.gz
+
+      - name: Release Fabric on Modrinth
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          modrinth-id: ${{ inputs.modrinth_id }}
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+
+          files: output/*fabric*.jar
+          name: ${{ inputs.mod_name }}-Fabric-${{ needs.preparation.outputs.MC_VERSION }}-${{ needs.preparation.outputs.MOD_VERSION }}
+          version: ${{ needs.preparation.outputs.MC_VERSION }}-${{ needs.preparation.outputs.MOD_VERSION }}+fabric
+          version-type: ${{ inputs.release_type }}
+          changelog-file: output/changelog.md
+
+          loaders: fabric
+          game-versions: ${{ needs.preparation.outputs.MC_VERSION }}
+          dependencies: ${{ inputs.dependencies }}
+
+  cf-fabric-release:
+    name: CurseForge Fabric Release
+    if: ${{ (inputs.loaders == 'fabric' || inputs.loaders == 'both') && inputs.debug == 'false' }}
+    needs:
+      - preparation
+      - build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+
+      - name: Extract build artifacts
+        run: tar -zxvf build.tar.gz
+
+      - name: Release Fabric on CurseForge
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          curseforge-id: ${{ inputs.curseforge_id }}
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+
+          files: output/*fabric*.jar
+          name: ${{ inputs.mod_name }}-Fabric-${{ needs.preparation.outputs.MC_VERSION }}-${{ needs.preparation.outputs.MOD_VERSION }}
+          version: ${{ needs.preparation.outputs.MC_VERSION }}-${{ needs.preparation.outputs.MOD_VERSION }}+fabric
+          version-type: ${{ inputs.release_type }}
+          changelog-file: output/changelog.md
+
+          loaders: fabric
+          game-versions: ${{ needs.preparation.outputs.MC_VERSION }}
+          dependencies: ${{ inputs.dependencies }}
+
+  github-release:
+    name: GitHub Release
+    needs:
+      - preparation
+      - build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+
+      - name: Extract build artifacts
+        run: tar -zxvf build.tar.gz
+
+      - name: Construct release info
+        env:
+          RELEASE_TYPE: ${{ inputs.release_type }}
+          LOADERS: ${{ inputs.loaders }}
+        run: |
+          if [ "$LOADERS" == "both" ]; then
+            FILES="output/*.jar"
+            LOADER=""
+          else
+            FILES="output/*$LOADERS*.jar"
+            LOADER="-$LOADERS"
+          fi
+
+          TAG="v${{ needs.preparation.outputs.MC_VERSION }}$LOADER-${{ needs.preparation.outputs.MOD_VERSION }}"
+          LOADER_NAME="${LOADER:0:1}$(echo ${LOADER:1:1} | tr '[:lower:]' '[:upper:]')${LOADER:2}"
+
+          echo "FILES=$FILES" >> $GITHUB_ENV
+          echo "TAG=$TAG" >> $GITHUB_ENV
+          echo "LOADER_NAME=$LOADER_NAME" >> $GITHUB_ENV
+
+      - name: Release on GitHub
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-tag: ${{ env.TAG }}
+          github-commitish: ${{ github.ref }}
+          files: ${{ env.FILES }}
+          name: v${{ needs.preparation.outputs.MC_VERSION }}${{ env.LOADER_NAME }}-${{ needs.preparation.outputs.MOD_VERSION }}
+          version: ${{ needs.preparation.outputs.MC_VERSION }}-${{ needs.preparation.outputs.MOD_VERSION }}
+          version-type: ${{ inputs.release_type }}
+          changelog-file: output/changelog.md
+
+  commit:
+    name: Commit changes
+    if: ${{ needs.preparation.outputs.NEEDS_COMMIT == 'true' }}
+    needs:
+      - preparation
+      - github-release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download preparation artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: preparation-artifacts
+
+      - name: Extract preparation artifacts
+        run: tar -zxvf preparation.tar.gz
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5.0.0
+        with:
+          commit_message: "bump version"
+          commit_user_name: "AlmostReliable"
+          file_pattern: "gradle.properties CHANGELOG.md"

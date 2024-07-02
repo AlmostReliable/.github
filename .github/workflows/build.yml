@@ -1,0 +1,46 @@
+name: Build
+
+on:
+  workflow_call:
+    inputs:
+      java-distribution:
+        type: string
+        description: java distribution to use
+        required: false
+        default: "microsoft"
+      java-version:
+        type: string
+        description: java version to use
+        required: false
+        default: "21"
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    if: |
+      !contains(github.event.head_commit.message, '[skip build]')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Checkout compound action
+        uses: actions/checkout@v4
+        with:
+          repository: AlmostReliable/.github
+          path: repo
+
+      - name: Move compound action
+        run: |
+          mv repo/.github/actions .github/actions
+          rm -rf repo
+
+      - name: Setup Java and Gradle
+        uses: ./.github/actions/gradle-java
+        with:
+          java-distribution: ${{ inputs.java-distribution }}
+          java-version: ${{ inputs.java-version }}
+          branch: ${{ github.event_name == 'pull_request' && 'read_only' || github.ref }}
+
+      - name: Build
+        run: ./gradlew build --stacktrace
