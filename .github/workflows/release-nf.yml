@@ -150,7 +150,7 @@ jobs:
       - name: Get Minecraft version
         id: mc_version
         run: |
-          MC_VERSION=$(grep -oP 'm(c|inecraft)Version\s*=\s*\K.*' gradle.properties)
+          MC_VERSION=$(grep -oP 'm(c|inecraft)Version\s*=\s*\K.*' gradle.properties | tr -d '\n')
 
           if [[ -z "$MC_VERSION" ]]; then
             echo "no Minecraft version found"
