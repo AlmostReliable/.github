@@ -189,21 +189,21 @@ jobs:
 
             sed -i "s/^## Unreleased.*/## [$MOD_VERSION] - $(date +%F)/" CHANGELOG.md
             awk -v n="[$MOD_VERSION]: https://github.com/$GITHUB_REPOSITORY/releases/tag/v$MC_VERSION$LOADER-$MOD_VERSION" '/^\[[0-9]+\.[0-9]+\.[0-9]+\]: https:\/\// && !inserted {print n; inserted=1}1' CHANGELOG.md > temp && mv temp CHANGELOG.md
-
-            git diff CHANGELOG.md
           elif grep -qF "## [$MOD_VERSION]" CHANGELOG.md; then
             echo "existing changelog entry found for version $MOD_VERSION"
 
             if ! grep -qF "[$MOD_VERSION]: https://" CHANGELOG.md; then
               echo "adding missing changelog link for version $MOD_VERSION"
               awk -v n="[$MOD_VERSION]: https://github.com/$GITHUB_REPOSITORY/releases/tag/v$MC_VERSION$LOADER-$MOD_VERSION" '/^\[[0-9]+\.[0-9]+\.[0-9]+\]: https:\/\// && !inserted {print n; inserted=1}1' CHANGELOG.md > temp && mv temp CHANGELOG.md
-
-              git diff CHANGELOG.md
             fi
           else
             echo "no changelog entry found for version $MOD_VERSION"
             exit 1
           fi
+
+          sed -i '/^## \[/i ## Unreleased\n- /\n' CHANGELOG.md
+
+          git diff CHANGELOG.md
 
       - name: Store commit info
         id: commit_info
