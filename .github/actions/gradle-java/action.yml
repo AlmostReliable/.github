@@ -22,7 +22,7 @@ runs:
         java-version: ${{ inputs.java-version }}
         distribution: ${{ inputs.java-distribution }}
 
-    - uses: gradle/actions/setup-gradle@v3
+    - uses: gradle/actions/setup-gradle@v4
       with:
         cache-read-only: ${{ github.ref != format('{0}', inputs.branch) }}
         cache-overwrite-existing: true

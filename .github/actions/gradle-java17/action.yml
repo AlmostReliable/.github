@@ -13,7 +13,7 @@ runs:
         java-version: 17.0.8
         distribution: microsoft
 
-    - uses: gradle/actions/setup-gradle@v3
+    - uses: gradle/actions/setup-gradle@v4
       with:
         cache-read-only: ${{ github.ref != format('{0}', inputs.branch) }}
         cache-overwrite-existing: true
