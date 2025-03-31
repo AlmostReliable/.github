@@ -17,7 +17,6 @@ runs:
       with:
         cache-read-only: ${{ github.ref != format('{0}', inputs.branch) }}
         cache-overwrite-existing: true
-        gradle-home-cache-cleanup: true
 
     - shell: bash
       run: chmod +x ./gradlew
