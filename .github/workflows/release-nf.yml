@@ -184,11 +184,11 @@ jobs:
             LOADER="-$LOADERS"
           fi
 
-          if grep -qF "## Unreleased" CHANGELOG.md; then
+          if grep -qF "## [$MOD_VERSION]" CHANGELOG.md; then
+            echo "existing changelog entry found for version $MOD_VERSION"
+          elif grep -qF "## Unreleased" CHANGELOG.md; then
             echo "unreleased changelog entry found, adjusting header"
             sed -i "s/^## Unreleased.*/## [$MOD_VERSION] - $(date +%F)/" CHANGELOG.md
-          elif grep -qF "## [$MOD_VERSION]" CHANGELOG.md; then
-            echo "existing changelog entry found for version $MOD_VERSION"
           else
             echo "no unreleased changelog entry found or entry for version $MOD_VERSION"
             exit 1
