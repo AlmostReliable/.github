@@ -199,7 +199,10 @@ jobs:
             awk -v n="[$MOD_VERSION]: https://github.com/$GITHUB_REPOSITORY/releases/tag/v$MC_VERSION$LOADER-$MOD_VERSION" '/^\[[0-9]+\.[0-9]+\.[0-9]+\]: https:\/\// && !inserted {print n; inserted=1}1' CHANGELOG.md > temp && mv temp CHANGELOG.md
           fi
 
-          sed -i "/^## \[$MOD_VERSION\]/i ## Unreleased\n- /\n" CHANGELOG.md
+          if ! grep -qF "## Unreleased" CHANGELOG.md; then
+            echo "adding Unreleased header above version $MOD_VERSION"
+            sed -i "/^## \[$MOD_VERSION\]/i ## Unreleased\n- /\n" CHANGELOG.md
+          fi
 
           git diff CHANGELOG.md
 
