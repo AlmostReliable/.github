@@ -426,7 +426,7 @@ jobs:
 
   cf-neoforge-release:
     name: CurseForge NeoForge Release
-    if: ${{ (inputs.loaders == 'neoforge' || inputs.loaders == 'both') && inputs.debug == 'false' }}
+    if: ${{ (!failure() && !cancelled()) && (inputs.loaders == 'neoforge' || inputs.loaders == 'both') && inputs.debug == 'false' }}
     needs:
       - preparation
       - build
@@ -459,7 +459,7 @@ jobs:
 
   mr-fabric-release:
     name: Modrinth Fabric Release
-    if: ${{ (inputs.loaders == 'fabric' || inputs.loaders == 'both') && inputs.debug == 'false' }}
+    if: ${{ (!failure() && !cancelled()) && (inputs.loaders == 'fabric' || inputs.loaders == 'both') && inputs.debug == 'false' }}
     needs:
       - preparation
       - build
@@ -492,7 +492,7 @@ jobs:
 
   cf-fabric-release:
     name: CurseForge Fabric Release
-    if: ${{ (inputs.loaders == 'fabric' || inputs.loaders == 'both') && inputs.debug == 'false' }}
+    if: ${{ (!failure() && !cancelled()) && (inputs.loaders == 'fabric' || inputs.loaders == 'both') && inputs.debug == 'false' }}
     needs:
       - preparation
       - build
@@ -525,6 +525,7 @@ jobs:
 
   github-release:
     name: GitHub Release
+    if: ${{ (!failure() && !cancelled()) }}
     needs:
       - preparation
       - build
