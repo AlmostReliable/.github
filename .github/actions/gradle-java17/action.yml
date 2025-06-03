@@ -20,5 +20,3 @@ runs:
 
     - shell: bash
       run: chmod +x ./gradlew
-
-    - uses: gradle/wrapper-validation-action@v2
