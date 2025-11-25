@@ -53,6 +53,13 @@ on:
         required: false
         default: "false"
         description: "enable debug mode (GitHub only)"
+    secrets:
+      MODRINTH_TOKEN:
+        required: true
+        description: "Modrinth API token"
+      CURSEFORGE_TOKEN:
+        required: true
+        description: "CurseForge API token"
 
 jobs:
   preparation:
