@@ -48,6 +48,7 @@ jobs:
     with:
       java-distribution: "microsoft"
       java-version: "21"
+      gametests: false
       mod_name: "AlmostUnified" # name used for the output JAR files (use a dash instead of spaces)
       curseforge_id: "633823" # ID of the project on CurseForge
       modrinth_id: "sdaSaQEz" # ID of the project on Modrinth

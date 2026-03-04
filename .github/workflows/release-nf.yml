@@ -13,6 +13,11 @@ on:
         description: java version to use
         required: false
         default: "21"
+      gametests:
+        type: boolean
+        description: whether to run gametests
+        required: false
+        default: false
       mod_name:
         type: string
         required: true
@@ -267,6 +272,7 @@ jobs:
         with:
           java-distribution: ${{ inputs.java-distribution }}
           java-version: ${{ inputs.java-version }}
+          gametests: ${{ inputs.gametests }}
           branch: ${{ github.event_name == 'pull_request' && 'read_only' || github.ref }}
 
       - name: Assemble the JARs

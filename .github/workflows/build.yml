@@ -13,6 +13,11 @@ on:
         description: java version to use
         required: false
         default: "21"
+      gametests:
+        type: boolean
+        description: whether to run gametests
+        required: false
+        default: false
 
 jobs:
   build:
@@ -44,3 +49,7 @@ jobs:
 
       - name: Build
         run: ./gradlew build --stacktrace
+
+      - name: Run gametests
+        if: ${{ inputs.gametests }}
+        run: ./gradlew gametests --stacktrace
