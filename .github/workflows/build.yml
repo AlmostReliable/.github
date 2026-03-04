@@ -52,4 +52,4 @@ jobs:
 
       - name: Run gametests
         if: ${{ inputs.gametests }}
-        run: ./gradlew gametests --stacktrace
+        run: ./gradlew runGametest --stacktrace
