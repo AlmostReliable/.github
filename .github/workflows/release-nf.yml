@@ -175,7 +175,7 @@ jobs:
             echo "version is already set"
           else
             echo "version is outdated, adjusting gradle.properties"
-            sed -i "s/modVersion = .*/modVersion = $MOD_VERSION/g" gradle.properties
+            sed -i -E "s/^modVersion( *= *).*/modVersion\1$MOD_VERSION/" gradle.properties
             git diff gradle.properties
           fi
 
