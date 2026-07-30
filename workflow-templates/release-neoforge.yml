@@ -26,6 +26,20 @@ on:
           - "alpha"
           - "beta"
           - "release"
+      environment:
+        type: choice
+        required: false
+        description: "mod environment"
+        default: "client | server"
+        options:
+          - "client"
+          - "client?"
+          - "client*"
+          - "server"
+          - "server?"
+          - "server*"
+          - "singleplayer"
+          - "dedicated-server"
       debug:
         type: boolean
         required: false
@@ -49,4 +63,5 @@ jobs:
       update_type: ${{ github.event.inputs.update_type }}
       release_type: ${{ github.event.inputs.release_type }}
       loaders: "neoforge"
+      environment: ${{ github.event.inputs.environment }}
       debug: ${{ github.event.inputs.debug }}

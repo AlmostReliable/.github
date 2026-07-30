@@ -48,6 +48,11 @@ on:
         required: true
         description: "loaders to release for"
         default: "both"
+      environment:
+        type: string
+        required: false
+        description: "mod environment"
+        default: "client | server"
       debug:
         type: string
         required: false
@@ -416,7 +421,7 @@ jobs:
         run: tar -zxvf build.tar.gz
 
       - name: Release NeoForge on Modrinth
-        uses: Kir-Antipov/mc-publish@v3.3
+        uses: Kira-NT/mc-publish@v3.3.1
         with:
           modrinth-id: ${{ inputs.modrinth_id }}
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
@@ -428,6 +433,7 @@ jobs:
           changelog-file: output/changelog.md
 
           loaders: neoforge
+          environment: ${{ inputs.environment }}
           game-versions: ${{ needs.preparation.outputs.MC_VERSION }}
           dependencies: ${{ inputs.dependencies }}
 
@@ -449,7 +455,7 @@ jobs:
         run: tar -zxvf build.tar.gz
 
       - name: Release NeoForge on CurseForge
-        uses: Kir-Antipov/mc-publish@v3.3
+        uses: Kira-NT/mc-publish@v3.3.1
         with:
           curseforge-id: ${{ inputs.curseforge_id }}
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
@@ -461,6 +467,7 @@ jobs:
           changelog-file: output/changelog.md
 
           loaders: neoforge
+          environment: ${{ inputs.environment }}
           game-versions: ${{ needs.preparation.outputs.MC_VERSION }}
           dependencies: ${{ inputs.dependencies }}
 
@@ -482,7 +489,7 @@ jobs:
         run: tar -zxvf build.tar.gz
 
       - name: Release Fabric on Modrinth
-        uses: Kir-Antipov/mc-publish@v3.3
+        uses: Kira-NT/mc-publish@v3.3.1
         with:
           modrinth-id: ${{ inputs.modrinth_id }}
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
@@ -494,6 +501,7 @@ jobs:
           changelog-file: output/changelog.md
 
           loaders: fabric
+          environment: ${{ inputs.environment }}
           game-versions: ${{ needs.preparation.outputs.MC_VERSION }}
           dependencies: ${{ inputs.dependencies }}
 
@@ -515,7 +523,7 @@ jobs:
         run: tar -zxvf build.tar.gz
 
       - name: Release Fabric on CurseForge
-        uses: Kir-Antipov/mc-publish@v3.3
+        uses: Kira-NT/mc-publish@v3.3.1
         with:
           curseforge-id: ${{ inputs.curseforge_id }}
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
@@ -527,6 +535,7 @@ jobs:
           changelog-file: output/changelog.md
 
           loaders: fabric
+          environment: ${{ inputs.environment }}
           game-versions: ${{ needs.preparation.outputs.MC_VERSION }}
           dependencies: ${{ inputs.dependencies }}
 
@@ -570,7 +579,7 @@ jobs:
           echo "LOADER_NAME=$LOADER_NAME" >> $GITHUB_ENV
 
       - name: Release on GitHub
-        uses: Kir-Antipov/mc-publish@v3.3
+        uses: Kira-NT/mc-publish@v3.3.1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           github-tag: ${{ env.TAG }}
